@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoanMatch - Find Your Perfect Loan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body, h1, h2, h3, p, a, button {
+      font-family: 'Poppins', sans-serif;
+    }
+    .footer-logo {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header-hero-container">
+  <header>
+    <div class="logo">
+      <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="LoanMatch Logo">
+      </a>
+    </div>
+    <nav class="nav-links">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('consumer') }}">Consumer Loan</a>
+      <a href="{{ url_for('asset') }}">Large Asset Loan</a>
+      <a href="{{ url_for('about') }}">About us</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find Your<br>Perfect Loan Match</h1>
+      <p class="hero-sub">Discover tailored financial solutions that fit your needs - from daily expenses to major investments.</p>
+      <div class="hero-buttons">
+        <a href="{{ url_for('consumer') }}" class="hero-btn primary">Get Started</a>
+        <a href="{{ url_for('about') }}" class="hero-btn secondary">Learn More</a>
+      </div>
+    </div>
+    <div class="wave-bottom">
+      <svg viewBox="0 0 1440 70" preserveAspectRatio="none">
+        <path fill="#ffffff" d="M0,32L60,37.3C120,43,240,53,360,58.7C480,64,600,64,720,58.7C840,53,960,43,1080,42.7C1200,43,1320,53,1380,58.7L1440,64L1440,70L1380,70C1320,70,1200,70,1080,70C960,70,840,70,720,70C600,70,480,70,360,70C240,70,120,70,60,70L0,70Z"></path>
+      </svg>
+    </div>
+  </section>
+</div>
+
+<section class="products">
+  <div class="product-card-container">
+    <a href="{{ url_for('consumer') }}" class="product-link">
+      <div class="product-card">
+        <div class="card-image">
+          <img src="{{ url_for('static', filename='consumer.jpg') }}" alt="Consumer Loan">
+        </div>
+        <h3>Consumer Loan</h3>
+        <p>Quick and flexible loans for your personal needs</p>
+        <div class="card-features">
+          <span><i class="fas fa-clock"></i> Quick approval</span>
+          <span><i class="fas fa-chart-line"></i> Competitive rates</span>
+          <span><i class="fas fa-file-alt"></i> Simple process</span>
+        </div>
+      </div>
+    </a>
+    <a href="{{ url_for('asset') }}" class="product-link">
+      <div class="product-card">
+        <div class="card-image">
+          <img src="{{ url_for('static', filename='asset.jpg') }}" alt="Large Asset Loan">
+        </div>
+        <h3>Large Asset Loan</h3>
+        <p>Secure financing for significant investments</p>
+        <div class="card-features">
+          <span><i class="fas fa-home"></i> Property loans</span>
+          <span><i class="fas fa-car"></i> Vehicle finance</span>
+          <span><i class="fas fa-building"></i> Business funding</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="features">
+  <h2>Why Choose LoanMatch?</h2>
+  <div class="features-grid">
+    <div class="feature-item">
+      <i class="fas fa-bolt"></i>
+      <h3>Fast Approval</h3>
+      <p>Get loan approval within 24 hours</p>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Secure Process</h3>
+      <p>Your data is protected with bank-level security</p>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-percentage"></i>
+      <h3>Best Rates</h3>
+      <p>Compare and find the lowest interest rates</p>
+    </div>
+    <div class="feature-item">
+      <i class="fas fa-headset"></i>
+      <h3>24/7 Support</h3>
+      <p>Expert assistance whenever you need it</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta-content">
+    <h2>Ready to Get Started?</h2>
+    <p>Find your perfect loan match today and take the first step towards your financial goals.</p>
+    <a href="{{ url_for('consumer') }}" class="cta-button">Apply Now</a>
+  </div>
+</section>
+
+<div class="wave-divider-footer">
+  <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="url(#gradient)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    <defs>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#0D47A1;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-logo">
+      <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="LoanMatch Logo" class="footer-logo-img">
+      </a>
+    </div>
+    <div class="footer-links">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('consumer') }}">Consumer Loan</a>
+      <a href="{{ url_for('asset') }}">Large Asset Loan</a>
+      <a href="{{ url_for('about') }}">About us</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

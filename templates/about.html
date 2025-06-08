@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - LoanMatch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_about.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #828282;
+            line-height: 1.6;
+        }
+        .section {
+            padding: 40px;
+        }
+        .section h1 {
+            color: #0D47A1;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        .about-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .about-content img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+        }
+        .about-text {
+            max-width: 600px;
+            font-weight: 300;
+        }
+        .about-text p {
+            margin-bottom: 1rem;
+        }
+        .vision-mission {
+            padding: 40px;
+        }
+        .vision-mission h2 {
+            text-align: center;
+            color: #0D47A1;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        .vm-columns {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .vm-item {
+            max-width: 350px;
+            text-align: center;
+        }
+        .vm-item img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .vm-item h3 {
+            color: #0D47A1;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+        .vm-item p {
+            font-weight: 300;
+        }
+
+        /* Header styles */
+        .header {
+            background: linear-gradient(to right, #0D47A1, #1976D2);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo a {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .logo img:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            padding: 5px 10px;
+        }
+
+        .nav-links a:hover {
+            transform: scale(1.1);
+            color: white;
+            opacity: 1;
+        }
+        
+        /* Footer styles */
+        .footer {
+            background: linear-gradient(to bottom, #0D47A1, #1976D2);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 50px;
+            width: auto;
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-logo img:hover {
+            transform: scale(1.1);
+        }
+
+        .footer-logo a {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            margin-bottom: 14px;
+        }
+
+        .footer-links a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            padding: 5px 10px;
+        }
+
+        .footer-links a:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            color: white;
+        }
+
+        .social-icons i {
+            font-size: 18px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons i:hover {
+            transform: scale(1.2);
+        }
+
+        .development-process {
+            padding: 60px 20px;
+            background: #ffffff;
+        }
+
+        .development-process h2 {
+            text-align: center;
+            color: #0D47A1;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        .process-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .process-tab {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            color: #666;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .process-tab i {
+            font-size: 20px;
+        }
+
+        .process-tab.active {
+            background: linear-gradient(135deg, #0D47A1, #1976D2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(13, 71, 161, 0.3);
+        }
+
+        .process-tab:hover:not(.active) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .process-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .process-content.active {
+            display: block;
+        }
+
+        .process-image-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .process-image-container img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .process-image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        .process-description {
+            padding: 30px;
+        }
+
+        .process-description h3 {
+            color: #0D47A1;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .process-description p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .process-tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .process-tab {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .process-image-container img {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-hero-container">
+        <header class="header">
+            <div class="logo">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="LoanMatch Logo">
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('consumer') }}">Consumer Loan</a>
+                <a href="{{ url_for('asset') }}">Large Asset Loan</a>
+                <a href="{{ url_for('about') }}">About us</a>
+            </nav>
+        </header>
+    </div>
+    <section class="section">
+        <h1>ABOUT OUR WEBSITE</h1>
+        <div class="about-content">
+            <img src="{{ url_for('static', filename='about-heroo.jpg') }}" alt="About Image" class="hover-zoom">
+
+            <div class="about-text">
+                <p>At LoanMatch!, we believe finding the right loan should be as easy and personal as finding the perfect match. Our platform connects borrowers with the most suitable banks and loan offers, carefully selected based on each individual's financial profile, preferences, and eligibility.</p>
+                <p>We understand that with so many loan options and promotions available, it can be overwhelming and confusing. That's why we designed LoanMatch! to simplify the process, providing clear, personalized recommendations that help users make confident financial decisions.</p>
+                <p>LoanMatch! uses smart matching technology combined with proven financial principles to deliver the best possible loan matches.</p>
+            </div>
+        </div>
+    </section>
+    <section class="vision-mission">
+        <h2>VISION & MISSION</h2>
+        <div class="vm-columns">
+            <div class="vm-item">
+                <img src="{{ url_for('static', filename='vision.jpg') }}" alt="Vision Image" class="hover-zoom">
+                <h3>VISION</h3>
+                <p>To become the leading platform that revolutionizes how people find and secure loans — making the borrowing experience smarter, simpler, and truly personalized for everyone.</p>
+            </div>
+            <div class="vm-item">
+                <img src="{{ url_for('static', filename='mission.jpg') }}" alt="Mission Image" class="hover-zoom">
+                <h3>MISSION</h3>
+                <p>To simplify borrowing by matching users with personalized loan offers, empowering them to make confident, informed financial decisions through smart technology and transparency.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Development Process Section -->
+    <section class="development-process">
+        <h2>DEVELOPMENT PROCESS</h2>
+        <div class="process-tabs">
+            <button class="process-tab active" onclick="openProcessTab(event, 'ideation')">
+                <i class="fas fa-lightbulb"></i>
+                <span>IDEATION</span>
+            </button>
+            <button class="process-tab" onclick="openProcessTab(event, 'research')">
+                <i class="fas fa-search"></i>
+                <span>RESEARCH</span>
+            </button>
+            <button class="process-tab" onclick="openProcessTab(event, 'development')">
+                <i class="fas fa-code"></i>
+                <span>DEVELOPMENT</span>
+            </button>
+        </div>
+
+        <div id="ideation" class="process-content active">
+            <div class="ideation-images">
+                <div class="ideation-image-container">
+                    <img src="{{ url_for('static', filename='ideation.jpg') }}" alt="Initial Brainstorming">
+                    <div class="ideation-image-caption">Getting energy</div>
+                </div>
+                <div class="ideation-image-container">
+                    <img src="{{ url_for('static', filename='ideation2.jpg') }}" alt="User Flow Design">
+                    <div class="ideation-image-caption">Getting inspiration and brainstorming</div>
+                </div>
+                <div class="ideation-image-container">
+                    <img src="{{ url_for('static', filename='idea.jpg') }}" alt="Feature Planning">
+                    <div class="ideation-image-caption">The idea of the website's theme</div>
+                </div>
+                <div class="ideation-image-container">
+                    <img src="{{ url_for('static', filename='ideation4.jpg') }}" alt="Final Concept">
+                    <div class="ideation-image-caption">The victory of the Vietnamese football team</div>
+                </div>
+            </div>
+            <div class="process-description">
+                <h3>IDEATION</h3>
+                <p>The initial phase where we brainstormed ideas, designed user flows, and planned key features for the loan comparison platform.</p>
+                <p>We took a trip to Sapa to get inspiration from the beautiful scenery and the unique culture of the local people. It helps us to understand the needs of the users and the market as well as get inspiration for the theme of the website.</p>
+                <p>We also talked to many people to get their feedback on the website and the loan comparison platform. It helps us to improve the website and the loan comparison platform.</p>
+            </div>
+        </div>
+
+        <div id="research" class="process-content">
+            <div class="research-images">
+                <div class="research-image-container">
+                    <img src="{{ url_for('static', filename='research.jpg') }}" alt="Market Research">
+                    <div class="research-image-caption">HOLA Visit</div>
+                </div>
+                <div class="research-image-container">
+                    <img src="{{ url_for('static', filename='research2.jpg') }}" alt="User Interviews">
+                    <div class="research-image-caption">FTU Visit</div>
+                </div>
+                <div class="research-image-container">
+                    <img src="{{ url_for('static', filename='research3.jpg') }}" alt="Data Analysis">
+                    <div class="research-image-caption">SAPA Visit</div>
+                </div>
+            </div>
+            <div class="process-description">
+                <h3>RESEARCH</h3>
+                <p>Our team conducted extensive market research and user interviews to understand the needs and pain points of loan seekers.</p>
+                <p>We visited HOLA, FTU, and SAPA to get inspiration and information about the loan comparison process and the needs of the users.</p>
+                <p>We also talked to many people to get their feedback on the website and the loan comparison platform. It helps us to improve the website and the loan comparison platform.</p>
+                <p>Through our research, we identified key opportunities to simplify the loan comparison process and provide valuable insights to our users.</p>
+            </div>
+        </div>
+
+        <div id="development" class="process-content">
+            <div class="development-images">
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev1.jpg') }}" alt="Planning">
+                    <div class="development-image-caption">Workdate 1</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev2.jpg') }}" alt="Design">
+                    <div class="development-image-caption">Workdate 2</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev3.jpg') }}" alt="Frontend">
+                    <div class="development-image-caption">Workdate 3</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev4.jpg') }}" alt="Backend">
+                    <div class="development-image-caption">Workdate 4</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev5.jpg') }}" alt="Database">
+                    <div class="development-image-caption">Workdate 5</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev6.jpg') }}" alt="Testing">
+                    <div class="development-image-caption">Workdate 6</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev7.jpg') }}" alt="Security">
+                    <div class="development-image-caption">Workdate 7</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev8.jpg') }}" alt="API">
+                    <div class="development-image-caption">Workdate 8</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev9.jpg') }}" alt="Optimization">
+                    <div class="development-image-caption">Workdate 9</div>
+                </div>
+                <div class="development-image-container">
+                    <img src="{{ url_for('static', filename='dev10.jpg') }}" alt="Deployment">
+                    <div class="development-image-caption">Workdate 10</div>
+                </div>
+            </div>
+            <div class="process-description">
+                <h3>DEVELOPMENT</h3>
+                <p>Our development process involved multiple stages from planning to deployment, ensuring a robust and secure loan comparison platform.</p>
+                <p>We used the latest technologies and best practices to develop the website and the loan comparison platform.</p>
+                <p>We have workdates to develop the website and the loan comparison platform. We have a team of 5 people to develop the website and the loan comparison platform.</p>
+                <p>Each phase was carefully executed with attention to detail, following best practices in software development and security standards.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    function openProcessTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        
+        // Hide all tab content
+        tabcontent = document.getElementsByClassName("process-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        
+        // Remove active class from all tabs
+        tablinks = document.getElementsByClassName("process-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        
+        // Show the selected tab content and mark the button as active
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+    </script>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <a href="{{ url_for('home') }}">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="LoanMatch Logo" class="footer-logo-img">
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('consumer') }}">Consumer Loan</a>
+        <a href="{{ url_for('asset') }}">Large Asset Loan</a>
+        <a href="{{ url_for('about') }}">About us</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
