@@ -2,3 +2,6 @@ flask
 flask-cors
 pandas
 openpyxl
+numpy
+openai>=1.0.0
+python-dotenv
