@@ -4,6 +4,14 @@ import re
 from typing import Dict, List, Tuple, Optional
 import logging
 from flask_cors import CORS
+import numpy as np
+from dotenv import load_dotenv
+import os
+from openai import OpenAI
+import json
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 app = Flask(__name__)
@@ -58,15 +66,16 @@ def generate_asset_repayment_schedule(loan_amount, desired_term_months, bank_dat
     """Generate repayment schedule for asset loan"""
     if desired_term_months > bank_data["max_term"]:
         return None
-
+    desired_term_months *= 12;
     fixed_rate = bank_data["fixed_rate"]
     float_rate = bank_data["float_rate"]
     fixed_period = bank_data["fixed_period"]
     grace_period = bank_data["grace_period"]
 
     monthly_principal = loan_amount / desired_term_months
-    total_interest = 0
-    total_payment = 0
+    schedule = []
+    total_total_interest = 0
+    total_total_payment = 0
 
     for month in range(1, desired_term_months + 1):
         if month <= grace_period:
@@ -80,13 +89,24 @@ def generate_asset_repayment_schedule(loan_amount, desired_term_months, bank_dat
             interest = remaining_principal * interest_rate / 12
             principal = monthly_principal
 
-        total_interest += interest
-        total_payment += principal + interest
+        total_total_interest += interest
+        total_total_payment += principal + interest
+        total_payment = principal + interest
+        remaining_balance = loan_amount - monthly_principal * max(0, month - grace_period)
+
+        schedule.append({
+            "Month": month,
+            "Principal": round(principal),
+            "Interest": round(interest),
+            "Total Payment": round(total_payment),
+            "Remaining Balance": round(remaining_balance)
+        })
 
     return {
-        "total_interest": round(total_interest),
-        "total_payment": round(total_payment),
-        "bank_name": bank_data["bank_name"]
+        "total_interest": round(total_total_interest),
+        "total_payment": round(total_total_payment),
+        "bank_name": bank_data["bank_name"],
+        "schedule" : schedule
     }
 
 # ==================== LOGIC CHO TÍN DỤNG ====================
@@ -123,12 +143,24 @@ def check_loan_eligibility(loan_amount, income, term, max_term=18):
 
 def calculate_declining_balance_schedule_summary(loan_amount, annual_rate, term_months):
     """Calculate declining balance schedule summary"""
+    
+    if term_months <= 0:
+        raise ValueError("term_months must be greater than 0")
+    if loan_amount <= 0:
+        raise ValueError("loan_amount must be greater than 0")
+        
+        
     monthly_rate = annual_rate / 12 / 100
     monthly_principal = loan_amount / term_months
-    
+    schedule = []
     remaining_balance = loan_amount
     total_interest = 0
     total_payment = 0
+    
+    for month in range(1, term_months + 1):
+        interest = remaining_balance * monthly_rate
+        if np.isnan(interest):
+            raise ValueError(f"NaN detected at month {month}, remaining_balance={remaining_balance}, rate={monthly_rate}")
 
     for month in range(1, term_months + 1):
         interest = remaining_balance * monthly_rate
@@ -136,10 +168,19 @@ def calculate_declining_balance_schedule_summary(loan_amount, annual_rate, term_
         total_interest += interest
         total_payment += total
         remaining_balance -= monthly_principal
+        
+        schedule.append({
+            "Month": month,
+            "Principal": round(monthly_principal),
+            "Interest": round(interest),
+            "Total Payment": round(total_payment),
+            "Remaining Balance": round(remaining_balance)
+        })
 
     return {
         "total_interest": round(total_interest, 2),
-        "total_payment": round(total_payment, 2)
+        "total_payment": round(total_payment, 2),
+        "schedule":schedule
     }
 
 # ==================== CHẤM ĐIỂM NGÂN HÀNG ====================
@@ -347,6 +388,70 @@ def load_credit_banks_data():
         print(f"Error loading credit banks data: {e}")
         return pd.DataFrame()
 
+# =========================== OPENAI ==============================
+
+def clean_json_response(content):
+    # Remove triple backticks or markdown formatting if present
+    return re.sub(r"^```(?:json)?|```$", "", content.strip(), flags=re.MULTILINE).strip()
+
+def get_recommendation_reason(query_info: dict) -> dict:    
+
+    prompt = f"""The user is applying for a loan with the following profile:
+    - Occupation: {query_info['occupation']}
+    - Monthly income: {query_info['income']} million VND
+    - Desired loan amount: {query_info['loan_amount']} million VND
+    - Desired loan term: {query_info['term_years']} years
+    - Estimated monthly repayment: {query_info['down_payment']} million VND
+    - Suggested bank: {query_info['bank_name']}
+    Write 3–5 highly personalized and specific bullet points explaining why this bank is the best match for the user.
+
+    You must:
+    - Refer directly to the user's income and how the estimated monthly payment fits within 50–60% of it
+    - Mention relevant benefits this bank offers (e.g., lower interest, fast approval, student-friendly terms, cashback)
+    - Personalize based on their occupation (e.g., students get easier approvals, freelancers benefit from flexible requirements, office workers value fast digital processes)
+
+    Each bullet point should be:
+    - 1 sentence
+    - No more than 25 words
+    - Written in a friendly, professional tone
+
+    Avoid generic statements. Be precise, contextual, and user-focused.
+
+    Respond **only with valid JSON** in this format:
+
+    {{
+      "reasons": [
+        "Reason 1...",
+        "Reason 2...",
+        "Reason 3...",
+        "Reason 4...",
+        "Reason 5..."
+      ]
+    }}
+
+    Do not include markdown or explanations — only the JSON object above.
+    """
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",  # or gpt-3.5-turbo
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant specialized in loan recommendations."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=400
+        )
+
+        content = response.choices[0].message.content.strip()
+        cleaned = re.sub(r"^```(?:json)?|```$", "", content.strip(), flags=re.MULTILINE).strip()
+        return json.loads(cleaned)
+
+    except json.JSONDecodeError as e:
+        return {"error": str(e), "raw": content}
+    except Exception as e:
+        return {"error": str(e)}
+
 # ==================== API ENDPOINTS ====================
 
 @app.route('/api/asset-loan', methods=['POST'])
@@ -418,18 +523,45 @@ def asset_loan_api():
         # app.logger.info(bank.get("reason"))
         
         # Format response
+        query_info = {
+        "loan_amount" : float(data['loan_amount']),
+        "income" : float(data['income']),
+        "loan_collateral" : float(data['loan_collateral']),
+        "down_payment" : float(data['down_payment']),
+        "term_years"  : int(data['term_years']),
+        "age" : int(data['age']),
+        "occupation" : str(data['occupation'])
+        }
+
         recommendations = []
         for _, bank in top_3_banks.iterrows():
+
+            query_info = {
+            "bank_name": bank['bank_name'],
+            "loan_amount" : float(data['loan_amount']),
+            "income" : float(data['income']),
+            "loan_collateral" : float(data['loan_collateral']),
+            "down_payment" : float(data['down_payment']),
+            "term_years"  : int(data['term_years']),
+            "age" : int(data['age']),
+            "occupation" : str(data['occupation'])
+            }
+
+            # Get AI-generated reasons
+            reason_result = get_recommendation_reason(query_info)
+
+            # Add to recommendations
             recommendations.append({
                 "bank_name": bank['bank_name'],
-                "total_payment": int(bank['total_payment']/1_000_000),
+                "total_payment": int(bank['total_payment'] / 1_000_000),
                 "total_interest": int(bank['total_interest']),
                 "final_score": bank['final_score'],
                 "personal_score": bank.get('personal_score', 0),
                 "cost_score": bank.get('cost_score', 0),
                 "age_compatible": bank.get('age_compatible', False),
                 "occupation_compatible": bank.get('occupation_compatible', False),
-                "reason": bank.get('reason', 'Không thể xác định')
+                "schedule" : bank['schedule'],
+                "reason": reason_result.get("reasons", reason_result)  # fallback if there's an error
             })
         
         return jsonify({
@@ -475,8 +607,10 @@ def credit_loan_api():
         if CREDIT_BANKS_DATA.empty:
             return jsonify({"error": "Could not load credit banks data"}), 500
         
-        for _, bank_data in CREDIT_BANKS_DATA.iterrows():
+        for _, bank_data in CREDIT_BANKS_DATA.iterrows():   
             annual_rate = bank_data[rate_group]
+            if (np.isnan(annual_rate)):
+                continue
             schedule_result = calculate_declining_balance_schedule_summary(
                 loan_amount * 1_000_000,  # Convert to VND
                 annual_rate,
@@ -498,7 +632,8 @@ def credit_loan_api():
                 "total_interest": int(bank['total_interest']),
                 "promotion_value": bank.get('promotion_value', 0),
                 "final_score": bank['final_score'],
-                # "reason": bank['reason']
+                "schedule" : bank['schedule']
+                
             })
         
         return jsonify({
